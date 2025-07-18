@@ -3,10 +3,9 @@ kind: Ingress
 metadata:
   name: my-dep-ingress
   annotations:
-    # Removed the static IP line that was causing issues
     networking.gke.io/managed-certificates: "my-ssl-cert"
-    kubernetes.io/ingress.class: "gce"
 spec:
+  ingressClassName: gce
   rules:
   - host: k8s.deployment.sh
     http:
@@ -29,7 +28,6 @@ spec:
             port:
               number: 80
 ---
-# Managed SSL Certificate (GKE magic!)
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:

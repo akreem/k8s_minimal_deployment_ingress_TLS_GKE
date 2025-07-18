@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: my-dep
   name: my-dep
@@ -10,17 +9,36 @@ spec:
   selector:
     matchLabels:
       app: my-dep
-  strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: my-dep
     spec:
       containers:
-      - image: nginx
+      - image: nginx:1.27.0
         name: nginx
-        resources: {}
+        ports:
+        - containerPort: 80
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         volumeMounts:
         - name: nginx-config
           mountPath: /etc/nginx/conf.d
@@ -39,4 +57,3 @@ spec:
           items:
           - key: index.html
             path: index.html
-status: {}
